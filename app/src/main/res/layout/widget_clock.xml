@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- L'heure et la date sont rendues dans un bitmap par ClockWidgetProvider
-     (RemoteViews ne permet pas d'appliquer un Typeface). -->
+     (RemoteViews ne permet pas d'appliquer un Typeface).-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_root"
     android:layout_width="match_parent"
