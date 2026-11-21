@@ -135,7 +135,7 @@ public class ClockWidgetProvider extends AppWidgetProvider {
         Bundle o = manager.getAppWidgetOptions(id);
         float density = context.getResources().getDisplayMetrics().density;
         int w = Math.max(600, (int) (o.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 110) * density * 1.5f));
-        int h = Math.max(300, (int) (o.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 40) * density * 3f));
+        int h = Math.max(300, (int) (o.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 40) * density * 1.5f));
 
         Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bmp);
