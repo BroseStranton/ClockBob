@@ -26,6 +26,8 @@
         <activity
             android:name=".ParamsActivity"
             android:exported="true"
+            android:launchMode="singleTop"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_params">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
