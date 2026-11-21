@@ -18,6 +18,8 @@ public final class FontStore {
     private static final String PREFS = "clockbob";
     static final String KEY_HOUR = "font_heure";   // nom affiche, "" = police systeme
     static final String KEY_DATE = "font_date";    // nom affiche, "" = police systeme
+    static final String KEY_PEND_HOUR = "pend_heure"; // choix en cours, pas encore validés
+    static final String KEY_PEND_DATE = "pend_date";
     private static final String KEY_ENTRIES = "font_entries"; // "fichierInterne|nomAffiche" par ligne
 
     private final Context ctx;
@@ -101,5 +103,15 @@ public final class FontStore {
  /** Fichier de stockage interne pour un nom de fichier interne. */
     public File fileOf(String internalName) {
         return new File(dir(), internalName);
+    }
+
+     /** Vrai si une fenêtre précédente a laissé des choix non validés. */
+    public boolean hasPending() {
+        return prefs().contains(KEY_PEND_HOUR);
+    }
+
+    /** Efface les choix en cours (après Valider / Annuler / Réinitialiser). */
+    public void clearPending() {
+        prefs().edit().remove(KEY_PEND_HOUR).remove(KEY_PEND_DATE).apply();
     }
 }
