@@ -10,7 +10,7 @@ android {
         applicationId "com.example.horlogewidget"
         minSdk 26        // texte auto-ajustable (autoSizeText) disponible des l'API 26
         targetSdk 29     // Android 10
-        versionCode 2026.11.20 // Build
+        versionCode 20261120 // Build
         versionName "1.0"	//version
     }
 
