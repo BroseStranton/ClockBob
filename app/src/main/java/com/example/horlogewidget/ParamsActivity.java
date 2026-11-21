@@ -44,6 +44,7 @@ public class ParamsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_params);
+        
 
         store = new FontStore(this);
         selHeure = store.getChoice(FontStore.KEY_HOUR);
@@ -51,8 +52,8 @@ public class ParamsActivity extends Activity {
 
         adHeure = makeSpinnerAdapter();
         adDate = makeSpinnerAdapter();
-        setupSpinner(R.id.spin_heure, adHeure, true);
-        setupSpinner(R.id.spin_date, adDate, false);
+        setupSpinner(R.id.spin_heure, adHeure);
+        setupSpinner(R.id.spin_date, adDate);
 
         txtPath = (EditText) findViewById(R.id.txt_path);
         txtPath.setFocusable(false); // rempli uniquement par le selecteur
@@ -73,10 +74,14 @@ public class ParamsActivity extends Activity {
         findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) { setResult(RESULT_CANCELED); finish(); }
         });
-        findViewById(R.id.btn_validate).setOnClickListener(new View.OnClickListener() {
+      findViewById(R.id.btn_validate).setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                store.setChoice(FontStore.KEY_HOUR, selHeure);
-                store.setChoice(FontStore.KEY_DATE, selDate);
+                Spinner sh = (Spinner) findViewById(R.id.spin_heure);
+                Spinner sd = (Spinner) findViewById(R.id.spin_date);
+                String h = sh.getSelectedItemPosition() <= 0 ? "" : (String) sh.getSelectedItem();
+                String d = sd.getSelectedItemPosition() <= 0 ? "" : (String) sd.getSelectedItem();
+                store.setChoice(FontStore.KEY_HOUR, h);
+                store.setChoice(FontStore.KEY_DATE, d);
                 ClockWidgetProvider.refreshAll(ParamsActivity.this);
                 setResult(RESULT_OK);
                 finish();
@@ -93,16 +98,9 @@ public class ParamsActivity extends Activity {
         return ad;
     }
 
-    private void setupSpinner(int id, ArrayAdapter<String> ad, final boolean isHeure) {
+    private void setupSpinner(int id, ArrayAdapter<String> ad) {
         Spinner sp = (Spinner) findViewById(id);
         sp.setAdapter(ad);
-        sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                String name = pos == 0 ? "" : (String) parent.getItemAtPosition(pos);
-                if (isHeure) selHeure = name; else selDate = name;
-            }
-            @Override public void onNothingSelected(AdapterView<?> parent) { }
-        });
     }
 
     /** Alimente les menus HEURE/DATE et leur selection courante. */
