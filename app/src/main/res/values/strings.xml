@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ClockBob</string>
+    <string name="widget_name">ClockBob</string>
+
+    <string name="title_params">PARAMÈTRES</string>
+    <string name="font_warning">TrueType (.ttf), OpenType (.otf) ou une collection (.ttc). Tout ce que cet appareil ne peut pas lire comme une fonte est refusé.</string>
+    <string name="label_choose">Chaque champ : choisir une police</string>
+    <string name="label_heure">HEURE</string>
+    <string name="label_date">DATE</string>
+    <string name="label_add_font">AJOUTER UNE POLICE</string>
+    <string name="label_my_fonts">MES POLICES</string>
+
+    <string name="browse">…</string>
+    <string name="delete">Supprimer</string>
+    <string name="btn_reset">Réinitialiser</string>
+    <string name="btn_cancel">Annuler</string>
+    <string name="btn_validate">Valider</string>
+    <string name="pick_font">Choisir une fonte</string>
+    <string name="font_rejected">Fonte illisible ou non reconnue : elle a été refusée.</string>
+</resources>
