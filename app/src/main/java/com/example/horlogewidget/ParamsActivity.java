@@ -39,7 +39,8 @@ public class ParamsActivity extends Activity {
     private ArrayAdapter<String> adHeure, adDate;
     private LinearLayout listFonts;
     private EditText txtPath;
-
+    private boolean refreshing = false; // ignore les rappels Spinner declenches par refreshSpinners
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,8 +53,8 @@ public class ParamsActivity extends Activity {
 
         adHeure = makeSpinnerAdapter();
         adDate = makeSpinnerAdapter();
-        setupSpinner(R.id.spin_heure, adHeure);
-        setupSpinner(R.id.spin_date, adDate);
+        setupSpinner(R.id.spin_heure, adHeure, true);
+        setupSpinner(R.id.spin_date, adDate, false);
 
         txtPath = (EditText) findViewById(R.id.txt_path);
         txtPath.setFocusable(false); // rempli uniquement par le selecteur
@@ -66,15 +67,20 @@ public class ParamsActivity extends Activity {
             @Override public void onClick(View v) {
                 store.setChoice(FontStore.KEY_HOUR, "");
                 store.setChoice(FontStore.KEY_DATE, "");
+                store.clearPending(); // on oublie aussi les choix en cours
                 ClockWidgetProvider.refreshAll(ParamsActivity.this);
                 setResult(RESULT_OK);
                 finish();
             }
         });
         findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { setResult(RESULT_CANCELED); finish(); }
+            @Override public void onClick(View v) {
+                store.clearPending(); // on oublie les choix en cours : rien n'est appliqué
+                setResult(RESULT_CANCELED);
+                finish();
+            }
         });
-      findViewById(R.id.btn_validate).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_validate).setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 Spinner sh = (Spinner) findViewById(R.id.spin_heure);
                 Spinner sd = (Spinner) findViewById(R.id.spin_date);
@@ -82,6 +88,7 @@ public class ParamsActivity extends Activity {
                 String d = sd.getSelectedItemPosition() <= 0 ? "" : (String) sd.getSelectedItem();
                 store.setChoice(FontStore.KEY_HOUR, h);
                 store.setChoice(FontStore.KEY_DATE, d);
+                store.clearPending(); // les choix sont maintenant les vrais, on oublie les provisoires
                 ClockWidgetProvider.refreshAll(ParamsActivity.this);
                 setResult(RESULT_OK);
                 finish();
@@ -98,13 +105,27 @@ public class ParamsActivity extends Activity {
         return ad;
     }
 
-    private void setupSpinner(int id, ArrayAdapter<String> ad) {
+    private void setupSpinner(int id, ArrayAdapter<String> ad, final boolean isHeure) {
         Spinner sp = (Spinner) findViewById(id);
         sp.setAdapter(ad);
+        sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                if (refreshing) return; // rappel automatique, pas un vrai choix utilisateur
+                String name = pos <= 0 ? "" : (String) parent.getItemAtPosition(pos);
+                if (isHeure) {
+                    selHeure = name;
+                    store.setChoice(FontStore.KEY_PEND_HOUR, name);
+                } else {
+                    selDate = name;
+                    store.setChoice(FontStore.KEY_PEND_DATE, name);
+                }
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent) { }
+        });
     }
-
     /** Alimente les menus HEURE/DATE et leur selection courante. */
     private void refreshSpinners() {
+        refreshing = true;              // bloquer les rappels automatiques pendant le remplissage
         adHeure.clear();
         adDate.clear();
         adHeure.add(DEFAULT_LABEL);
@@ -115,8 +136,10 @@ public class ParamsActivity extends Activity {
         }
         select(adHeure, (Spinner) findViewById(R.id.spin_heure), selHeure);
         select(adDate, (Spinner) findViewById(R.id.spin_date), selDate);
+        ((View) findViewById(android.R.id.content)).post(new Runnable() {
+            @Override public void run() { refreshing = false; }
+        });
     }
-
     private void select(ArrayAdapter<String> ad, Spinner sp, String name) {
         int pos = (name == null || name.isEmpty()) ? 0 : ad.getPosition(name);
         sp.setSelection(pos < 0 ? 0 : pos, false);
