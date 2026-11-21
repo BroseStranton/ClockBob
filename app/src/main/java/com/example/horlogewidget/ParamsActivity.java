@@ -163,10 +163,7 @@ public class ParamsActivity extends Activity {
     private void openPicker() {
         Intent i = new Intent(Intent.ACTION_GET_CONTENT);
         i.addCategory(Intent.CATEGORY_OPENABLE);
-        i.setType("*/*");
-        i.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{
-                "application/x-font-ttf", "application/x-font-otf",
-                "application/x-font-sfnt", "application/vnd.ms-opentype"});
+        i.setType("*/*"); // MIUI grise les .ttf si on filtre par type MIME ici
         startActivityForResult(Intent.createChooser(i, getString(R.string.pick_font)), REQ_PICK_FONT);
     }
 
@@ -185,6 +182,10 @@ public class ParamsActivity extends Activity {
             String fileName = queryName(uri);
             int dot = fileName.lastIndexOf('.');
             String ext = dot < 0 ? "" : fileName.substring(dot).toLowerCase();
+                 if (!ext.equals(".ttf") && !ext.equals(".otf") && !ext.equals(".ttc")) {
+                Toast.makeText(this, R.string.font_rejected, Toast.LENGTH_LONG).show();
+                return;
+            }
             String visibleName = dot < 0 ? fileName : fileName.substring(0, dot);
 
             // Verification sur une copie provisoire en cache
